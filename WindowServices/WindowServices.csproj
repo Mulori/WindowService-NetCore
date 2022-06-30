@@ -6,6 +6,8 @@
     <Nullable>enable</Nullable>
     <UseWindowsForms>true</UseWindowsForms>
     <ImplicitUsings>enable</ImplicitUsings>
+    <ApplicationIcon>stopwatch.ico</ApplicationIcon>
+    <Version>1.1.1</Version>
   </PropertyGroup>
 
   <ItemGroup>

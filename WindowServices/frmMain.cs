@@ -78,7 +78,7 @@ namespace WindowServices
             list.Items.Add("Aguarde! Processando serviço solicitado...");
 
             btnStart.Enabled = false;
-            btnStop.Enabled = true;
+            btnStop.Enabled = false;
 
             OcultarForm();
         }
@@ -124,9 +124,12 @@ namespace WindowServices
                 int index = 0;
                 foreach (var i in listCaminhos)
                 {
-                    if (i != "")
+                    var item = i.Replace("\r\n", string.Empty);
+
+                    if (item != "")
                     {
-                        if (Process.GetProcessesByName(listTarefas[index]).Length < 1)
+                        var taskName = listTarefas[index].Replace("\r\n", string.Empty);
+                        if (Process.GetProcessesByName(taskName).Length < 1)
                             Start(i);
                     }
 
@@ -174,7 +177,7 @@ namespace WindowServices
         {
             this.Icon.ContextMenuStrip = new System.Windows.Forms.ContextMenuStrip();
             this.Icon.ContextMenuStrip.Items.Add("Abrir", null, this.MenuOpen_Click);
-            this.Icon.ContextMenuStrip.Items.Add("Sair", null, this.MenuExit_Click);
+            //this.Icon.ContextMenuStrip.Items.Add("Sair", null, this.MenuExit_Click);
         }
 
         void MenuOpen_Click(object sender, EventArgs e)
@@ -195,6 +198,33 @@ namespace WindowServices
         public void notifyIcon_MouseDoubleClick(object sender, MouseEventArgs e)
         {
             AbrirForm();
+        }
+
+        private void frmMain_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.Control && e.KeyCode == Keys.F4)
+            {
+                if (MessageBox.Show("Deseja finalizar a aplicação Window Service?", "Atenção", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes)
+                Environment.Exit(1);
+            }
+        }
+
+        private void list_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.Control && e.KeyCode == Keys.F4)
+            {
+                if (MessageBox.Show("Deseja finalizar a aplicação Window Service?", "Atenção", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes)
+                    Environment.Exit(1);
+            }
+        }
+
+        private void btnMinimize_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.Control && e.KeyCode == Keys.F4)
+            {
+                if (MessageBox.Show("Deseja finalizar a aplicação Window Service?", "Atenção", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes)
+                    Environment.Exit(1);
+            }
         }
     }
 }
