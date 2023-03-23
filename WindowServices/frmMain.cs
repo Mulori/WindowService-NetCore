@@ -8,9 +8,11 @@ namespace WindowServices
         private static string nameService { get; set; }
         private static string path { get; set; }
         private static string task { get; set; }
+        private static string time { get; set; }
 
         List<string> listTarefas = new List<string>();
         List<string> listCaminhos = new List<string>();
+        List<string> listTempos = new List<string>();
 
         public frmMain()
         {
@@ -37,11 +39,17 @@ namespace WindowServices
                 File.Create(@"C:\ServiceR\Config\nameTask.ini");
             }
 
+            if (!File.Exists(@"C:\ServiceR\Config\timeTask.ini"))
+            {
+                File.Create(@"C:\ServiceR\Config\timeTask.ini");
+            }
+
             try
             {
                 nameService = File.ReadAllText(@"C:\ServiceR\Config\nameService.ini");
                 path = File.ReadAllText(@"C:\ServiceR\Config\pathTask.ini");
                 task = File.ReadAllText(@"C:\ServiceR\Config\nameTask.ini");
+                time = File.ReadAllText(@"C:\ServiceR\Config\timeTask.ini");
             }
             catch { }
             
@@ -62,8 +70,9 @@ namespace WindowServices
             
             var paths = path.Split('|');
             var tasks = task.Split('|');
+            var times = time.Split('|');
 
-            foreach(var _task in tasks)
+            foreach (var _task in tasks)
             {
                 listTarefas.Add(_task);
             }
@@ -73,6 +82,10 @@ namespace WindowServices
                 listCaminhos.Add(_path);
             }
 
+            foreach (var _time in times)
+            {
+                listTempos.Add(_time);
+            }
 
             list.Items.Clear();
             list.Items.Add("Aguarde! Processando serviço solicitado...");
@@ -128,9 +141,31 @@ namespace WindowServices
 
                     if (item != "")
                     {
-                        var taskName = listTarefas[index].Replace("\r\n", string.Empty);
-                        if (Process.GetProcessesByName(taskName).Length < 1)
-                            Start(i);
+                        var timeStart = listTempos[index].Replace("\r\n", string.Empty);
+
+                        if (timeStart != "")
+                        {
+                            var periodo = timeStart.Split('-');
+                            var inicio = periodo[0];
+                            var fim = periodo[1];
+
+                            DateTime dataAbertura = DateTime.Parse(DateTime.Now.ToString("yyyy-MM-dd") + " " + inicio);
+                            DateTime dataFinalizacao = DateTime.Parse(DateTime.Now.ToString("yyyy-MM-dd") + " " + fim);
+
+                            if (DateTime.Now >= dataAbertura && DateTime.Now <= dataFinalizacao)
+                            {
+                                var taskName = listTarefas[index].Replace("\r\n", string.Empty);
+                                if (Process.GetProcessesByName(taskName).Length < 1)
+                                    Start(i);
+                            }
+                        }
+                        else
+                        {
+                            var taskName = listTarefas[index].Replace("\r\n", string.Empty);
+                            if (Process.GetProcessesByName(taskName).Length < 1)
+                                Start(i);
+                        }
+                        
                     }
 
                     index++;
